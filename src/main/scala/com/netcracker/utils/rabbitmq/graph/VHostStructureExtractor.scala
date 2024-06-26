@@ -4,7 +4,8 @@ import com.netcracker.utils.rabbitmq.graph.Utils.{UrlStringContext, mapper}
 import com.typesafe.scalalogging.StrictLogging
 import requests.RequestAuth
 
-import java.net.{URI, URL}
+import java.net.{URI, URL, URLEncoder}
+import java.nio.charset.StandardCharsets
 
 
 class VHostStructureExtractor (
@@ -26,10 +27,10 @@ class VHostStructureExtractor (
 }
 
 object VHostStructureExtractor {
-	def apply(mgmtUrl: String, vhost: Option[String]) = {
+	def apply(mgmtUrl: String, vhost: String) = {
 		val uri = URI.create(mgmtUrl)
 		new VHostStructureExtractor(
-			url"${uri.getScheme}://${uri.getHost}:${uri.getPort}/api/definitions/${vhost.get}",
+			url"${uri.getScheme}://${uri.getHost}:${uri.getPort}/api/definitions/${URLEncoder.encode(vhost, StandardCharsets.UTF_8)}",
 			uri.getUserInfo().split(":") match {
 				case Array(user, password) => RequestAuth.Basic(user, password)
 				case _ => throw new IllegalArgumentException(s"Can't parse username and password from given url: $mgmtUrl")

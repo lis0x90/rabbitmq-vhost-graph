@@ -11,7 +11,7 @@ import java.nio.file.{Files, Path}
 object Cli extends StrictLogging {
 	case class RunConfig(
 		url: String = "",
-		vhost: Option[String] = None,
+		vhost: String = "/",
 		image: Option[Path] = None,
 	)
 
@@ -38,8 +38,8 @@ object Cli extends StrictLogging {
 				.text("generate PNG image")
 				.action((u, c) => c.copy(image = Some(Utils.normalizePath(u)))),
 			opt[String]('v', "vhost")
-				.text("vhost name")
-				.action((v, c) => c.copy(vhost = Some(v)))
+				.text("vhost name. Defaults: /")
+				.action((v, c) => c.copy(vhost = v))
 		)
 	}
 
