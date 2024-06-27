@@ -6,6 +6,8 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 import java.net.{URI, URL}
 import java.nio.file.{Path, Paths}
+import java.security.MessageDigest
+import java.util.regex.Pattern
 
 object Utils {
 	val mapper = new ObjectMapper()
@@ -21,7 +23,7 @@ object Utils {
 
 	implicit class StringExt(private val s: String) {
 		def compat: String =
-			s.replace("-", "_")
+			s.replaceAll("[^\\w]", "_")
 	}
 
 	implicit class UrlStringContext(private val sc: StringContext) extends AnyVal {
