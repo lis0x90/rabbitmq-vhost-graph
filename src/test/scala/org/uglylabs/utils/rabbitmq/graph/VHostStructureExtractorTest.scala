@@ -1,4 +1,4 @@
-package com.netcracker.utils.rabbitmq.graph
+package org.uglylabs.utils.rabbitmq.graph
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test;

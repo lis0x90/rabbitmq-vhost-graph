@@ -1,6 +1,6 @@
-package com.netcracker.utils.rabbitmq.graph
+package org.uglylabs.utils.rabbitmq.graph
 
-import com.netcracker.utils.rabbitmq.graph.Utils.*
+import Utils.*
 import com.typesafe.scalalogging.StrictLogging
 import net.sourceforge.plantuml.SourceStringReader
 import scopt.OParser

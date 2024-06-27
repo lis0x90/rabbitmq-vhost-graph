@@ -1,6 +1,6 @@
-package com.netcracker.utils.rabbitmq.graph
+package org.uglylabs.utils.rabbitmq.graph
 
-import com.netcracker.utils.rabbitmq.graph.Utils.{UrlStringContext, mapper}
+import Utils.{UrlStringContext, mapper}
 import com.typesafe.scalalogging.StrictLogging
 import requests.RequestAuth
 

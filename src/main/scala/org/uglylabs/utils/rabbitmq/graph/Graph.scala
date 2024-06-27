@@ -1,4 +1,4 @@
-package com.netcracker.utils.rabbitmq.graph
+package org.uglylabs.utils.rabbitmq.graph
 
 import com.typesafe.scalalogging.StrictLogging
 
