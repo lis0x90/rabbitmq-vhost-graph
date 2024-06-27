@@ -1,8 +1,10 @@
 package org.uglylabs.utils.rabbitmq.graph
 
 import Utils.*
+import ch.qos.logback.classic.{Level, LoggerContext}
 import com.typesafe.scalalogging.StrictLogging
 import net.sourceforge.plantuml.SourceStringReader
+import org.slf4j.LoggerFactory
 import scopt.OParser
 
 import java.nio.file.StandardOpenOption.*
@@ -13,10 +15,11 @@ object Cli extends StrictLogging {
 		url: String = "",
 		vhost: String = "/",
 		image: Option[Path] = None,
+		verbose: Boolean = false,
 	)
 
-	val builder = OParser.builder[RunConfig]
-	val argParser = {
+	private val builder = OParser.builder[RunConfig]
+	private val argParser = {
 		import builder.*
 		OParser.sequence(
 			programName("rabbitmq-graph"),
@@ -31,15 +34,18 @@ object Cli extends StrictLogging {
 				  |""".stripMargin),
 			arg[String]("url")
 				.required()
-				.text("http(s)://user:password@host:port url to RabbitMQ management web interface")
+				.text("url to RabbitMQ management web interface in format: http(s)://user:password@host:port")
 				.action((u, c) => c.copy(url = u.stripSuffix("/"))),
 			arg[String]("image")
 				.optional()
-				.text("generate PNG image")
+				.text("generate PNG image instead of printing PlantUML diagram definition")
 				.action((u, c) => c.copy(image = Some(Utils.normalizePath(u)))),
 			opt[String]('v', "vhost")
 				.text("vhost name. Defaults: /")
-				.action((v, c) => c.copy(vhost = v))
+				.action((v, c) => c.copy(vhost = v)),
+			opt[Unit]("verbose")
+				.text("turn on verbose logging mode. All messages prints to STDERR")
+				.action((_, c) => c.copy(verbose = true)),
 		)
 	}
 
@@ -48,10 +54,16 @@ object Cli extends StrictLogging {
 			case Some(config) => print(execute(config))
 			case _ => System.exit(1)
 		}
+		logger.info("Processing successfully finished")
 		System.exit(0)
 	}
 
 	private def execute(runOptions: RunConfig): String = {
+		if (runOptions.verbose) {
+			val loggerContext = LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext]
+			loggerContext.getLogger("root").setLevel(Level.DEBUG);
+		}
+
 		val structure = VHostStructureExtractor(runOptions.url, runOptions.vhost).extract()
 		val plantUmlDefinition = Graph.render(structure)
 

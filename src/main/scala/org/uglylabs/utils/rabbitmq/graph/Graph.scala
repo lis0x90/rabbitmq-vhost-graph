@@ -11,8 +11,13 @@ object Graph extends StrictLogging {
 			structure.queues.flatMap(formatQueueDlx)
 
 		val graphBuilder = new StringBuilder()
-		graphBuilder.append("@startuml\n")
-		graphBuilder.append("\nleft to right direction\n\n")
+		graphBuilder.append(
+			"""
+			  |@startuml
+			  |left to right direction
+			  |!define exchange(e_alias, e_type) hexagon "e_alias\n<size:12><e_type></size>" as e_alias
+			  |
+			  |""".stripMargin)
 		lines.foreach(l => graphBuilder.append(l).append("\n"))
 		graphBuilder.append("@enduml\n")
 
@@ -20,7 +25,7 @@ object Graph extends StrictLogging {
 	}
 
 	private def formatExchange(e : Exchange) =
-		s"""hexagon "${e.name}""""
+		s"""exchange("${e.name}","${e.exchangeType}")"""
 
 	private def formatQueue(q: Queue): String =
 		s"""queue "${q.name}"""" + (if (q.durable) "" else " #line.dotted")
