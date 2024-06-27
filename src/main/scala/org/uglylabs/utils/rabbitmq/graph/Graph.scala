@@ -7,6 +7,7 @@ object Graph extends StrictLogging {
 	def render(structure: ExportedStructure): String  = {
 		logger.info("Render PlantUML graph definition.")
 		val lines: List[String] = structure.exchanges.map(formatExchange) ++
+			structure.queues.flatMap(_.dlx()).map(formatDlxExchange) ++
 			structure.queues.map(formatQueue) ++
 			structure.bindings.map(formatBinding) ++
 			structure.queues.flatMap(formatQueueDlx)
@@ -26,15 +27,24 @@ object Graph extends StrictLogging {
 	}
 
 	private def formatExchange(e : Exchange) =
-		s"""exchange("${e.name}","${e.name.compat}", "${e.exchangeType}")"""
+		s"""exchange("${e.name}","e_${e.name.compat}", "${e.exchangeType}")"""
+
+	private def formatDlxExchange(e: String) =
+		s"""exchange("${e}","e_${e.compat}", "dlx")"""
 
 	private def formatQueue(q: Queue): String =
-		s"""queue "${q.name}" as ${q.name.compat}""" + (if (q.durable) "" else " #line.dotted")
+		s"""queue "${q.name}" as q_${q.name.compat}""" + (if (q.durable) "" else " #line.dotted")
 
 	private def formatQueueDlx(q: Queue): Option[String] =
-		q.dlx().map(dlx => s""""${q.name.compat}" --> "${dlx.compat}" #line.dashed""")
+		q.dlx().map(dlx => s"""q_${q.name.compat} --> e_${dlx.compat} #line.dashed""")
 
-	private def formatBinding(b: Binding): String =
-		s""""${b.source.compat}" --> "${b.destination.compat}"""" +
+	private def formatBinding(b: Binding): String = {
+		val targetName = (b.destinationType match {
+			case "queue" => "q_"
+			case "exchange" => "e_"
+			case _ => throw new IllegalArgumentException(s"Unknown destination type: ${b.destinationType}" )
+		}) + b.destination.compat
+		s"""e_${b.source.compat} --> $targetName""" +
 			b.routingKey().map(s => s""" : $s""").getOrElse("")
+	}
 }
