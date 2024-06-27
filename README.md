@@ -3,7 +3,7 @@ Simple utility that scans given RabbitMQ VHost and represent exchanges and queue
 
 # Usage
 Generate PlantUML diagram definition:
-`java -jar target/rabbitmq-graph.jar http://guest:guest@localhost:15672`
+`java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672`
 
 Output:
 ```
@@ -21,7 +21,7 @@ queue "toys-supplier"
 
 Or you can generate image:
 
-`java -jar target/rabbitmq-graph.jar http://guest:guest@localhost:15672 graph.png`
+`java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672 graph.png`
 
 Result image:
 
