@@ -19,8 +19,10 @@ queue "toys-supplier"
 @enduml
 ```
 
-Generate image:
+Or you can generate image:
+
 `java -jar target/rabbitmq-graph.jar http://guest:guest@localhost:15672 graph.png`
 
 Result image:
+
 ![graph.png](graph.png)
