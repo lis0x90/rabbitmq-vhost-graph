@@ -19,6 +19,11 @@ object Utils {
 		}
 	}
 
+	implicit class StringExt(private val s: String) {
+		def compat: String =
+			s.replace("-", "_")
+	}
+
 	implicit class UrlStringContext(private val sc: StringContext) extends AnyVal {
 		def url(args: Any*): URL =
 			URI.create(

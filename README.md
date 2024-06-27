@@ -1,9 +1,34 @@
 # rabbitmq-vhost-graph
 Simple utility that scans given RabbitMQ VHost and represent exchanges and queues as a graph
 
+# Help 
+
+```commandline
+~>java -jar target/rabbitmq-graph.jar --help
+
+Image generation usage example:
+java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672 image.png
+
+or if you omit image path, program will print definition in plantUML for default vhost:
+java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672
+
+
+Usage: rabbitmq-graph [options] url [image]
+
+  url                  url to RabbitMQ management web interface in format: http(s)://user:password@host:port
+  image                generate PNG image instead of printing PlantUML diagram definition
+  -h, --vhost <value>  vhost name. Defaults: /
+  -v, --verbose        turn on verbose logging mode. All messages prints to STDERR
+  --help               prints this usage text
+```
+
+
 # Usage
 Generate PlantUML diagram definition:
-`java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672`
+
+```commandline
+~>java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672
+```
 
 Output:
 ```
@@ -21,7 +46,9 @@ queue "toys-supplier"
 
 Or you can generate image:
 
-`java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672 graph.png`
+```commandline
+~>java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672 graph.png
+```
 
 Result image:
 

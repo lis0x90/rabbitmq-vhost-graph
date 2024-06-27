@@ -40,12 +40,13 @@ object Cli extends StrictLogging {
 				.optional()
 				.text("generate PNG image instead of printing PlantUML diagram definition")
 				.action((u, c) => c.copy(image = Some(Utils.normalizePath(u)))),
-			opt[String]('v', "vhost")
+			opt[String]('h', "vhost")
 				.text("vhost name. Defaults: /")
 				.action((v, c) => c.copy(vhost = v)),
-			opt[Unit]("verbose")
+			opt[Unit]('v', "verbose")
 				.text("turn on verbose logging mode. All messages prints to STDERR")
 				.action((_, c) => c.copy(verbose = true)),
+			help("help").text("prints this usage text"),
 		)
 	}
 
@@ -54,7 +55,6 @@ object Cli extends StrictLogging {
 			case Some(config) => print(execute(config))
 			case _ => System.exit(1)
 		}
-		logger.info("Processing successfully finished")
 		System.exit(0)
 	}
 
@@ -75,8 +75,12 @@ object Cli extends StrictLogging {
 				reader.outputImage(out).getDescription()
 			}
 
-			s"""Description: $description
-			   |Image generated: $imagePath""".stripMargin
+			if (description.contains("error")) {
+				"Image generation error. Look at the image for more info"
+			} else {
+				s"""Description: $description
+				   |Image generated: $imagePath""".stripMargin
+			}
 		}.getOrElse(plantUmlDefinition)
 	}
 }

@@ -1,6 +1,7 @@
 package org.uglylabs.utils.rabbitmq.graph
 
 import com.typesafe.scalalogging.StrictLogging
+import Utils.StringExt
 
 object Graph extends StrictLogging {
 	def render(structure: ExportedStructure): String  = {
@@ -15,7 +16,7 @@ object Graph extends StrictLogging {
 			"""
 			  |@startuml
 			  |left to right direction
-			  |!define exchange(e_alias, e_type) hexagon "e_alias\n<size:12><e_type></size>" as e_alias
+			  |!define exchange(e_name, e_alias, e_type) hexagon "e_name\n<size:12><e_type></size>" as e_alias
 			  |
 			  |""".stripMargin)
 		lines.foreach(l => graphBuilder.append(l).append("\n"))
@@ -25,15 +26,15 @@ object Graph extends StrictLogging {
 	}
 
 	private def formatExchange(e : Exchange) =
-		s"""exchange("${e.name}","${e.exchangeType}")"""
+		s"""exchange("${e.name}","${e.name.compat}", "${e.exchangeType}")"""
 
 	private def formatQueue(q: Queue): String =
-		s"""queue "${q.name}"""" + (if (q.durable) "" else " #line.dotted")
+		s"""queue "${q.name}" as ${q.name.compat}""" + (if (q.durable) "" else " #line.dotted")
 
 	private def formatQueueDlx(q: Queue): Option[String] =
-		q.dlx().map(dlx => s""""${q.name}" --> "$dlx" #line.dashed""")
+		q.dlx().map(dlx => s""""${q.name.compat}" --> "${dlx.compat}" #line.dashed""")
 
 	private def formatBinding(b: Binding): String =
-		s""""${b.source}" --> "${b.destination}"""" +
+		s""""${b.source.compat}" --> "${b.destination.compat}"""" +
 			b.routingKey().map(s => s""" : $s""").getOrElse("")
 }
