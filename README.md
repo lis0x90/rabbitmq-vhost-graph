@@ -44,10 +44,10 @@ queue "toys-supplier"
 @enduml
 ```
 
-Or you can generate image:
+Or you can generate image for multiple vhosts linked with shovel plugin:
 
 ```commandline
-~>java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672 graph.png
+~>java -jar rabbitmq-graph.jar http://guest:guest@localhost:15672 -h agg,a,b graph.png
 ```
 
 Result image:
