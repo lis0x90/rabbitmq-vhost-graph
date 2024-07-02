@@ -92,7 +92,7 @@ object Graph extends StrictLogging {
 		s"""package ${definition.vhost} {
 			|	Component "${definition.name}" as $alias <<shovel>>
 			|	$alias .> $destination
-			|	$source .> $alias
+			|	$source ..> $alias
 			|}
 			|""".stripMargin
 	}
