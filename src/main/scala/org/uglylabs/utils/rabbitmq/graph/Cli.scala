@@ -7,13 +7,14 @@ import net.sourceforge.plantuml.SourceStringReader
 import org.slf4j.LoggerFactory
 import scopt.OParser
 
+import java.net.URI
 import java.nio.file.StandardOpenOption.*
 import java.nio.file.{Files, Path}
 
 object Cli extends StrictLogging {
 	case class RunConfig(
-		url: String = "",
-		vhost: String = "/",
+		url: URI = URI.create("http://guest:guest@localhost:15672"),
+		vhost: Seq[String] = Seq(),
 		image: Option[Path] = None,
 		verbose: Boolean = false,
 	)
@@ -35,14 +36,14 @@ object Cli extends StrictLogging {
 			arg[String]("url")
 				.required()
 				.text("url to RabbitMQ management web interface in format: http(s)://user:password@host:port")
-				.action((u, c) => c.copy(url = u.stripSuffix("/"))),
+				.action((v, c) => c.copy(url = URI.create(v))),
 			arg[String]("image")
 				.optional()
 				.text("generate PNG image instead of printing PlantUML diagram definition")
 				.action((u, c) => c.copy(image = Some(Utils.normalizePath(u)))),
-			opt[String]('h', "vhost")
+			opt[Seq[String]]('h', "vhost")
 				.text("vhost name. Defaults: /")
-				.action((v, c) => c.copy(vhost = v)),
+				.action((v, c) => c.copy(vhost = c.vhost ++ v)),
 			opt[Unit]('v', "verbose")
 				.text("turn on verbose logging mode. All messages prints to STDERR")
 				.action((_, c) => c.copy(verbose = true)),

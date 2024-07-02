@@ -1,13 +1,10 @@
 package org.uglylabs.utils.rabbitmq.graph
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
-import java.net.{URI, URL}
+import java.net.URI
 import java.nio.file.{Path, Paths}
-import java.security.MessageDigest
-import java.util.regex.Pattern
 
 object Utils {
 	val mapper = new ObjectMapper()
@@ -21,20 +18,15 @@ object Utils {
 		}
 	}
 
-	implicit class StringExt(private val s: String) {
-		def compat: String =
-			s.replaceAll("[^\\w]", "_")
-	}
-
-	implicit class UrlStringContext(private val sc: StringContext) extends AnyVal {
-		def url(args: Any*): URL =
+	implicit class UriStringContext(private val sc: StringContext) extends AnyVal {
+		def uri(args: Any*): URI =
 			URI.create(
 				sc.parts.take(args.size)
 					.zipWithIndex
 					.map { case (s, i) => s + args(i).toString }
 					.mkString + sc.parts.drop(args.size).mkString
 
-			).toURL
+			)
 	}
 
 	def normalizePath(path: String): Path = {
