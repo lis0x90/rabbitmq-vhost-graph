@@ -77,7 +77,7 @@ object Graph extends StrictLogging {
 	}
 
 	private def renderShovel(definition: Shovel): String = {
-		val alias = s"${definition.vhost}_shovel_${definition.name}"
+		val alias = compat(s"${definition.vhost}_shovel_${definition.name}")
 
 		val source = definition
 			.sourceQueue.map(queueAlias(definition.sourceVHost, _))
@@ -100,5 +100,8 @@ object Graph extends StrictLogging {
 	private def exchangeAlias(vhost: String, name: String) = alias(vhost, "e", name)
 	private def queueAlias(vhost: String, name: String) = alias(vhost, "q", name)
 	private def alias(vhost: String, entityChar: String, name: String) =
-		s"${vhost}_${entityChar}_${name.replaceAll("[^\\w]", "_")}"
+		s"${compat(vhost)}_${entityChar}_${compat(name)}"
+
+	private def compat(s: String): String =
+		s.replaceAll("[^\\w]", "_")
 }
