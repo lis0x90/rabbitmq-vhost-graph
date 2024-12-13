@@ -26,11 +26,6 @@ class VHostStructureExtractor (
 		logger.info(s"Request for vhost definition: $defUrl")
 		val exported = requests.get(defUrl.toString, auth = auth(), verifySslCerts = false)
 
-		if (exported.statusCode != 200) {
-			logger.error(s"Unexpected status code: ${exported.statusCode}")
-			throw new RuntimeException(s"Unexpected status code: ${exported.statusCode}")
-		}
-
 		logger.info("Parse structure data...")
 		mapper.readValue(exported.data.array, classOf[VHost])
 	}
@@ -38,15 +33,19 @@ class VHostStructureExtractor (
 	private def extractShovels(): List[Shovel] = {
 		logger.info(s"List shovel plugins...")
 		val defUrl = uri"${uri.getScheme}://${uri.getHost}:${uri.getPort}/api/shovels/"
-		val exported = requests.get(defUrl.toString, auth = auth(), verifySslCerts = false)
 
-		if (exported.statusCode != 200) {
-			logger.error(s"Unexpected status code: ${exported.statusCode}")
-			throw new RuntimeException(s"Unexpected status code: ${exported.statusCode}")
+		val exported = requests.get(defUrl.toString, auth = auth(), verifySslCerts = false, check = false)
+		exported.statusCode match {
+			case 200 =>
+				logger.info("Parse structure data...")
+				mapper.readValue(exported.data.array, new TypeReference[List[Shovel]]() {})
+			case 404 =>
+				logger.info("Shovel plugin is not installed. Skipping...")
+				List.empty
+			case _ =>
+				logger.error(s"Unexpected status code: ${exported.statusCode}")
+				throw new RuntimeException(s"Unexpected status code: ${exported.statusCode}")
 		}
-
-		logger.info("Parse structure data...")
-		mapper.readValue(exported.data.array, new TypeReference[List[Shovel]](){})
 	}
 
 	def auth() = {
