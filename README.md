@@ -1,5 +1,5 @@
 # rabbitmq-vhost-graph
-Simple utility that scans given RabbitMQ VHost and represent exchanges and queues as a graph
+A simple utility that scans a given RabbitMQ VHost and represents exchanges and queues as a graph.
 
 # Help 
 
